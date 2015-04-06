@@ -7,12 +7,12 @@ from rest_framework import exceptions, serializers
 class AuthTokenSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(style={'input_type': 'password'})
-    key = attrs.get('key')
+    key = serializers.CharField(required=False)
 
     def validate(self, attrs):
         username = attrs.get('username')
         password = attrs.get('password')
-
+        key = attrs.get('key')
         if username and password:
             user = authenticate(username=username, password=password)
 
