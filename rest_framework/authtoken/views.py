@@ -13,15 +13,17 @@ class ObtainAuthToken(APIView):
     renderer_classes = (renderers.JSONRenderer,)
     serializer_class = AuthTokenSerializer
 
-    def post(self, request):
-        serializer = self.serializer_class(data=request.DATA)
-        if serializer.is_valid():
-            token, created = Token.objects.get_or_create(user=serializer.object['user'])
-            if not created:
+
+def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        if not created:
                 token.delete()
-                token, created = Token.objects.get_or_create(user=serializer.object['user'])
-            return Response({'token': token.key})
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key})
+
 
 
 obtain_auth_token = ObtainAuthToken.as_view()
